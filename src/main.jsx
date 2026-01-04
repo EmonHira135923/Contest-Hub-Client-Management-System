@@ -10,7 +10,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthContexts>
       <RouterProvider router={Router}></RouterProvider>
-      <ToastContainer />
+      <ToastContainer autoClose={2000} />
     </AuthContexts>
   </StrictMode>
 );

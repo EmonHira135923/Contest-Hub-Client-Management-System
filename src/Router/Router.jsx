@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter } from "react-router";
 import Root from "../layout/Root.jsx";
 import Login from "../Pages/auth/Login.jsx";
@@ -16,7 +15,7 @@ const Router = createBrowserRouter([
     Component: Login,
   },
   {
-    path: "/reg",
+    path: "/register",
     Component: Registration,
   },
 ]);
