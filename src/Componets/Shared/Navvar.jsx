@@ -1,101 +1,169 @@
 import React, { useState } from "react";
-import { Menu, X, House, Info, LogIn, UserPlus } from "lucide-react";
 import { NavLink } from "react-router";
+import {
+  Menu,
+  X,
+  House,
+  Trophy,
+  Moon,
+  Sun,
+  BookText,
+  HelpCircle,
+  ShieldQuestion,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
+import useTheme from "../hooks/useTheme";
 
-const Navvar = () => {
-  const [toggle, setToggle] = useState(true);
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  const activeClass =
-    "border-b-2 border-[#632ee3] bg-clip-text bg-gradient-to-r from-[#632ee3] to-[#9f62f2] text-purple-700 font-bold";
+  // Context থেকে isDark এবং toggleTheme ফাংশন নিন
+  const { isDark, toggleTheme } = useTheme();
 
-  // Public Nav Items
-  const publicItems = [
+  // --- Theme Based Conditional Classes ---
+  const theme = {
+    navBg: isDark ? "bg-gray-950 border-gray-800" : "bg-white border-gray-200",
+    textMain: isDark ? "text-gray-100" : "text-gray-800",
+    mobileMenuBg: isDark ? "bg-gray-900" : "bg-gray-50",
+    activeLink: isDark
+      ? "text-purple-400 border-purple-400"
+      : "text-purple-700 border-purple-600",
+    btnGhost: isDark
+      ? "text-gray-300 hover:bg-gray-800"
+      : "text-gray-600 hover:bg-gray-100",
+  };
+
+  const navLinks = [
     { name: "Home", path: "/", icon: <House size={18} /> },
-    { name: "About Us", path: "/about", icon: <Info size={18} /> },
+    { name: "All Contests", path: "/all-contests", icon: <Trophy size={18} /> },
+    { name: "Blog", path: "/blog", icon: <BookText size={18} /> },
+    { name: "Why Join?", path: "/why-join", icon: <HelpCircle size={18} /> },
+    {
+      name: "Problems",
+      path: "/all-problems",
+      icon: <ShieldQuestion size={18} />,
+    },
   ];
 
-  // Auth based Nav Items
-  const authItems = [
-        { name: "Login", path: "/login", icon: <LogIn size={18} /> },
-        { name: "Register", path: "/register", icon: <UserPlus size={18} /> },
-      ];
-
   return (
-    <nav className="p-5 bg-gray-50 shadow-md">
-      <div className="flex justify-between items-center text-xl font-bold">
-
-        {/* Logo & Mobile Toggle */}
-        <div className="flex items-center gap-2">
-          <div className="md:hidden">
-            <button onClick={() => setToggle(!toggle)}>
-              {toggle ? <Menu /> : <X />}
+    <nav
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 shadow-sm ${theme.navBg}`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-20 items-center">
+          {/* Logo & Mobile Menu Trigger */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={`md:hidden p-2 rounded-xl transition-colors ${theme.btnGhost}`}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
+            <NavLink to="/" className="flex items-center">
+              <span
+                className={`text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r ${
+                  isDark
+                    ? "from-purple-400 to-blue-400"
+                    : "from-purple-700 to-indigo-600"
+                }`}
+              >
+                CONTEST-HUB
+              </span>
+            </NavLink>
           </div>
 
-          <NavLink to="/" className="flex gap-2 items-center">
-            <span className="text-2xl bg-clip-text bg-gradient-to-r from-[#632ee3] to-[#9f62f2] text-transparent">
-              HERO.IO
-            </span>
-          </NavLink>
-        </div>
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center gap-2">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-4 py-2 text-sm font-bold transition-all ${
+                    theme.textMain
+                  } 
+                  ${isActive ? `border-b-2 ${theme.activeLink}` : "hover:text-purple-500"}`
+                }
+              >
+                {link.icon} {link.name}
+              </NavLink>
+            ))}
+          </div>
 
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden absolute left-0 w-full bg-gray-200 p-5 transition-all duration-300 ${
-            toggle ? "-top-96" : "top-16"
-          }`}
-        >
-          {[...publicItems, ...authItems].map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                isActive ? activeClass : "block py-2"
-              }
-              onClick={() => setToggle(true)}
+          {/* Action Buttons (Theme Toggle + Auth) */}
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className={`p-2.5 rounded-full transition-all active:scale-90 ${
+                isDark
+                  ? "bg-gray-800 text-yellow-400"
+                  : "bg-gray-100 text-gray-600"
+              }`}
             >
-              <span className="flex gap-2 items-center">
-                {item.icon}
-                {item.name}
-              </span>
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            <div className="hidden sm:flex items-center gap-3">
+              <NavLink
+                to="/login"
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${theme.btnGhost}`}
+              >
+                <LogIn size={18} /> Login
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 dark:shadow-none transition-all"
+              >
+                <UserPlus size={18} /> Register
+              </NavLink>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-[500px] border-t" : "max-h-0"
+        } ${theme.mobileMenuBg}`}
+      >
+        <div className="px-6 py-8 space-y-5">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.name}
+              to={link.path}
+              className={`flex items-center gap-4 text-lg font-bold ${theme.textMain}`}
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="text-purple-500">{link.icon}</span> {link.name}
             </NavLink>
           ))}
-        </div>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-6 items-center">
-          {publicItems.map((item) => (
+          <div className="pt-6 flex flex-col gap-3">
             <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) => (isActive ? activeClass : "")}
+              to="/login"
+              className={`flex justify-center items-center gap-2 py-3.5 rounded-2xl font-bold border ${
+                isDark
+                  ? "border-gray-700 text-white"
+                  : "border-gray-300 text-gray-800"
+              }`}
+              onClick={() => setIsOpen(false)}
             >
-              <span className="flex gap-1 items-center">
-                {item.icon}
-                {item.name}
-              </span>
+              Login
             </NavLink>
-          ))}
-        </div>
-
-        {/* Right Side (Auth / Github) */}
-        <div className="hidden md:flex gap-4 items-center">
-          {authItems.map((item) => (
             <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) => (isActive ? activeClass : "")}
+              to="/register"
+              className="py-3.5 bg-purple-600 text-white text-center rounded-2xl font-bold shadow-lg"
+              onClick={() => setIsOpen(false)}
             >
-              <span className="flex gap-1 items-center">
-                {item.icon}
-                {item.name}
-              </span>
+              Register Now
             </NavLink>
-          ))}
+          </div>
         </div>
       </div>
     </nav>
   );
 };
 
-export default Navvar;
+export default Navbar;
