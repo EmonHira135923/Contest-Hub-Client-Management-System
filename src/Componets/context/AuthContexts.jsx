@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Provider } from "./Provider";
 
 const AuthContexts = ({ children }) => {
-  const user = {
-    name: "Emon",
-  };
+  const [user, setUser] = useState(null);
 
   const authinfo = {
     user,

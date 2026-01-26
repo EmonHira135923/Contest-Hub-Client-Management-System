@@ -12,14 +12,17 @@ import {
   ShieldQuestion,
   LogIn,
   UserPlus,
+  PlusCircle,
 } from "lucide-react";
 import useTheme from "../hooks/useTheme";
+import useAuth from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Context থেকে isDark এবং toggleTheme ফাংশন নিন
   const { isDark, toggleTheme } = useTheme();
+  const { user } = useAuth();
 
   // --- Theme Based Conditional Classes ---
   const theme = {
@@ -34,17 +37,28 @@ const Navbar = () => {
       : "text-gray-600 hover:bg-gray-100",
   };
 
-  const navLinks = [
+  // ১. সবার জন্য পাবলিক লিঙ্ক
+  const publicLinks = [
     { name: "Home", path: "/", icon: <House size={18} /> },
     { name: "All Contests", path: "/all-contests", icon: <Trophy size={18} /> },
-    { name: "Blog", path: "/blog", icon: <BookText size={18} /> },
     { name: "Why Join?", path: "/why-join", icon: <HelpCircle size={18} /> },
     {
       name: "Problems",
       path: "/all-problems",
       icon: <ShieldQuestion size={18} />,
     },
+    { name: "Blog", path: "/blog", icon: <BookText size={18} /> },
   ];
+
+  const privateLinks = [
+    {
+      name: "Create Contest",
+      path: "/create-contest",
+      icon: <PlusCircle size={18} />,
+    },
+  ];
+
+  const navLinks = user ? [...publicLinks, ...privateLinks] : publicLinks;
 
   return (
     <nav
