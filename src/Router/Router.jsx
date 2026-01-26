@@ -19,11 +19,11 @@ const Router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, Component: Home },
-      { path: "", Component: AllContest },
-      { path: "", Component: WhyJoin },
-      { path: "", element: AllProbleam },
-      { path: "", element: CreateContest },
-      { path: "", Component: Blog },
+      { path: "/all-contests", Component: AllContest },
+      { path: "/why-join", Component: WhyJoin },
+      { path: "/all-problems", element: AllProbleam },
+      { path: "/create-contest", element: CreateContest },
+      { path: "/blog", Component: Blog },
     ],
   },
   // Auth Layout

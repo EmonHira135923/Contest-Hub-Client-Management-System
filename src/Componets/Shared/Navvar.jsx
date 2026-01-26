@@ -121,13 +121,13 @@ const Navbar = () => {
 
             <div className="hidden sm:flex items-center gap-3">
               <NavLink
-                to="/login"
+                to="/auth/login"
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${theme.btnGhost}`}
               >
                 <LogIn size={18} /> Login
               </NavLink>
               <NavLink
-                to="/register"
+                to="/auth/register"
                 className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 dark:shadow-none transition-all"
               >
                 <UserPlus size={18} /> Register
@@ -156,7 +156,7 @@ const Navbar = () => {
           ))}
           <div className="pt-6 flex flex-col gap-3">
             <NavLink
-              to="/login"
+              to="/auth/login"
               className={`flex justify-center items-center gap-2 py-3.5 rounded-2xl font-bold border ${
                 isDark
                   ? "border-gray-700 text-white"
@@ -167,7 +167,7 @@ const Navbar = () => {
               Login
             </NavLink>
             <NavLink
-              to="/register"
+              to="/auth/register"
               className="py-3.5 bg-purple-600 text-white text-center rounded-2xl font-bold shadow-lg"
               onClick={() => setIsOpen(false)}
             >
