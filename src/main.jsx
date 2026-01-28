@@ -6,14 +6,17 @@ import Router from "../src/Router/Router";
 import { ToastContainer } from "react-toastify";
 import AuthContexts from "./Componets/context/AuthContexts";
 import { ThemeProvider } from "./Componets/context/ThemeContext";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ThemeProvider>
-      <AuthContexts>
-        <RouterProvider router={Router}></RouterProvider>
-        <ToastContainer autoClose={2000} />
-      </AuthContexts>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthContexts>
+          <RouterProvider router={Router}></RouterProvider>
+          <ToastContainer autoClose={2000} />
+        </AuthContexts>
+      </ThemeProvider>
+    </QueryClientProvider>
   </StrictMode>,
 );

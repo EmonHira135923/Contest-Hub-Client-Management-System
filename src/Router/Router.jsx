@@ -8,8 +8,12 @@ import ErrorPage from "../Pages/ErrorPage.jsx";
 import AllContest from "../Pages/AllContest.jsx";
 import WhyJoin from "../Pages/WhyJoin.jsx";
 import AllProbleam from "../Pages/AllProbleam.jsx";
-import CreateContest from "../Pages/CreateContest.jsx";
 import Blog from "../Pages/Blog.jsx";
+import Dashboard from "../Pages/Dashboard/Dashboard.jsx";
+import CreateContest from "../Pages/Dashboard/CreateContest.jsx";
+import PrivateRouter from "./PrivateRouter.jsx";
+import DashboardLayout from "../layout/DashboardLayout.jsx";
+import ForbiddenPage from "../Componets/Shared/ForbiddenPage.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -41,6 +45,17 @@ const Router = createBrowserRouter([
         Component: Registration,
       },
     ],
+  },
+  // Dashboard
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRouter>
+        <DashboardLayout />
+      </PrivateRouter>
+    ),
+    errorElement: <ForbiddenPage />,
+    children: [{ index: true, Component: Dashboard }],
   },
 ]);
 

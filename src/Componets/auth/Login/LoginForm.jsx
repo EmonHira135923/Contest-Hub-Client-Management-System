@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  LogIn,
-  ArrowRight,
-  ShieldCheck,
-} from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, LogIn, ShieldCheck } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router";
 import useTheme from "../../hooks/useTheme";
 import useAuth from "../../hooks/useAuth";
@@ -22,6 +14,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,51 +23,60 @@ const Login = () => {
   const location = useLocation();
   const { signin, googleUser } = useAuth();
 
-  const from = location?.state || "/";
+  // PrivateRouter থেকে আসা state অথবা ডিফল্ট ড্যাশবোর্ড
+  const from = location.state || "/dashboard";
 
-  // --- ১. ইমেইল এবং পাসওয়ার্ড দিয়ে লগইন ---
+  // --- ১. ইমেইল এবং পাসওয়ার্ড দিয়ে লগইন ---
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      await signin(data.email, data.password);
-      toast.success("Welcome back! Login successful.");
-      navigate(from, { replace: true });
+      const result = await signin(data.email, data.password);
+
+      if (result) {
+        toast.success("Welcome back! Login successful.");
+        // সফল লগইন এর পর রিডাইরেক্ট
+        navigate(location?.state || "/dashboard");
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Login Error:", err);
       toast.error(
-        err?.code === "auth/user-not-found"
-          ? "User not found!"
-          : "Invalid email or password!",
+        err?.code === "auth/invalid-credential"
+          ? "Invalid email or password!"
+          : "Something went wrong. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // --- ২. গুগল দিয়ে লগইন এবং ডাটাবেজে চেক/সেভ ---
+  // --- ২. গুগল দিয়ে লগইন এবং ডাটাবেজে সেভ ---
   const handleGoogleLogin = async () => {
     try {
       const res = await googleUser();
 
-      const userInfo = {
-        name: res?.user?.displayName,
-        email: res?.user?.email,
-        photo: res?.user?.photoURL,
-        role: "user",
-        lastLogin: new Date(),
-      };
+      if (res?.user) {
+        const userInfo = {
+          name: res.user.displayName,
+          email: res.user.email,
+          photo: res.user.photoURL,
+          role: "user",
+          lastLogin: new Date(),
+        };
 
-      // গুগল ইউজারকে ডাটাবেজে পাঠানো (যদি ইউজার নতুন হয় তবে সেভ হবে)
-      await axios.post(`${Baseurl}/register`, userInfo);
+        // ডাটাবেজে ইউজার ইনফো পাঠানো
+        await axios.post(`${Baseurl}/register`, userInfo);
 
-      toast.success(`Welcome ${res?.user?.displayName}!`);
-      navigate(from, { replace: true });
+        toast.success(`Welcome ${res.user.displayName}!`);
+        // সফল গুগল লগইন এর পর রিডাইরেক্ট
+        navigate(location?.state || "/dashboard");
+      }
     } catch (err) {
       console.error("Google login error:", err);
       toast.error("Google login failed!");
     }
   };
 
+  // থিম স্টাইল কনফিগ
   const themeStyles = isDark
     ? {
         card: "bg-[#0f172a] border-gray-800 shadow-2xl shadow-purple-900/10",
@@ -98,7 +100,7 @@ const Login = () => {
       <div
         className={`flex flex-col lg:flex-row max-w-4xl w-full rounded-3xl overflow-hidden border ${themeStyles.card}`}
       >
-        {/* Left Side: Info (Hidden on Mobile) */}
+        {/* বাম পাশ: ইনফো সেকশন */}
         <div
           className={`hidden lg:flex lg:w-[40%] bg-gradient-to-br ${themeStyles.sidebar} p-10 text-white flex-col justify-between relative`}
         >
@@ -120,12 +122,11 @@ const Login = () => {
           <div className="z-10 text-[10px] font-mono opacity-50 uppercase tracking-widest">
             Member access only
           </div>
-          {/* Decorative Circles */}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Right Side: Login Form */}
+        {/* ডান পাশ: লগইন ফর্ম */}
         <div className="flex-1 p-8 sm:p-12">
           <div className="max-w-sm mx-auto">
             <div className="text-center lg:text-left mb-8">
@@ -138,7 +139,7 @@ const Login = () => {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Email Input */}
+              {/* Email */}
               <div className="space-y-1">
                 <div className="relative">
                   <Mail
@@ -159,7 +160,7 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Password Input */}
+              {/* Password */}
               <div className="space-y-1">
                 <div className="relative">
                   <Lock
@@ -189,7 +190,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Forgot Password Link */}
               <div className="text-right">
                 <button
                   type="button"
@@ -207,9 +207,9 @@ const Login = () => {
                 {isSubmitting ? (
                   <span className="loading loading-spinner loading-xs"></span>
                 ) : (
-                  <>
-                    <LogIn size={18} className="mr-2" /> Sign In
-                  </>
+                  <div className="flex items-center justify-center gap-2">
+                    <LogIn size={18} /> Sign In
+                  </div>
                 )}
               </button>
 
@@ -217,8 +217,9 @@ const Login = () => {
                 Or continue with
               </div>
 
-              {/* Google Login Button */}
+              {/* Google Button */}
               <button
+                state={location?.state}
                 type="button"
                 onClick={handleGoogleLogin}
                 className={`btn btn-outline w-full h-12 rounded-2xl border-gray-200 hover:bg-gray-50 transition-all font-bold ${isDark ? "text-white border-gray-700 hover:bg-gray-800" : "text-gray-700 bg-white"}`}
@@ -234,6 +235,7 @@ const Login = () => {
               <p className={`text-center text-xs mt-6 ${themeStyles.sub}`}>
                 Don't have an account?{" "}
                 <Link
+                  state={location?.state}
                   to="/auth/register"
                   className="text-purple-500 font-bold hover:underline"
                 >

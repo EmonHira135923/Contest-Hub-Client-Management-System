@@ -8,7 +8,6 @@ import {
   Moon,
   Sun,
   BookText,
-  HelpCircle,
   ShieldQuestion,
   LogIn,
   UserPlus,
@@ -26,10 +25,9 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
 
   const { isDark, toggleTheme } = useTheme();
-  const { user, Signout } = useAuth();
+  const { user, loading, Signout } = useAuth();
   const navigate = useNavigate();
 
-  // বাইরে ক্লিক করলে ড্রপডাউন বন্ধ করার জন্য
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -58,6 +56,7 @@ const Navbar = () => {
     btnGhost: isDark
       ? "text-gray-300 hover:bg-gray-800"
       : "text-gray-600 hover:bg-gray-100",
+    skeleton: isDark ? "bg-gray-800" : "bg-gray-200",
   };
 
   const publicLinks = [
@@ -71,15 +70,16 @@ const Navbar = () => {
     { name: "Blog", path: "/blog", icon: <BookText size={18} /> },
   ];
 
-  const privateLinks = [
-    {
-      name: "Create Contest",
-      path: "/create-contest",
-      icon: <PlusCircle size={18} />,
-    },
-  ];
-
-  const navLinks = user ? [...publicLinks, ...privateLinks] : publicLinks;
+  const privateLinks = user
+    ? [
+        {
+          name: "Create Contest",
+          path: "/create-contest",
+          icon: <PlusCircle size={18} />,
+        },
+      ]
+    : [];
+  const navLinks = [...publicLinks, ...privateLinks];
 
   return (
     <nav
@@ -87,7 +87,7 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          {/* Logo & Mobile Menu Trigger */}
+          {/* Logo */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -104,22 +104,30 @@ const Navbar = () => {
             </NavLink>
           </div>
 
-          {/* Desktop Links */}
+          {/* Desktop Links with Skeleton Logic */}
           <div className="hidden md:flex items-center gap-2">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-4 py-2 text-sm font-bold transition-all ${theme.textMain} ${isActive ? `border-b-2 ${theme.activeLink}` : "hover:text-purple-500"}`
-                }
-              >
-                {link.icon} {link.name}
-              </NavLink>
-            ))}
+            {loading
+              ? // Navigation Links Skeleton
+                [1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className={`h-8 w-24 mx-2 rounded-lg animate-pulse ${theme.skeleton}`}
+                  ></div>
+                ))
+              : navLinks.map((link) => (
+                  <NavLink
+                    key={link.name}
+                    to={link.path}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-4 py-2 text-sm font-bold transition-all ${theme.textMain} ${isActive ? `border-b-2 ${theme.activeLink}` : "hover:text-purple-500"}`
+                    }
+                  >
+                    {link.icon} {link.name}
+                  </NavLink>
+                ))}
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons & Profile Skeleton */}
           <div className="flex items-center gap-4">
             <button
               onClick={toggleTheme}
@@ -128,7 +136,17 @@ const Navbar = () => {
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            {user ? (
+            {loading ? (
+              // Profile/Auth Skeleton
+              <div className="flex items-center gap-3 animate-pulse">
+                <div
+                  className={`h-10 w-10 rounded-full ${theme.skeleton}`}
+                ></div>
+                <div
+                  className={`hidden sm:block h-8 w-20 rounded-xl ${theme.skeleton}`}
+                ></div>
+              </div>
+            ) : user ? (
               /* User Profile Dropdown */
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -146,7 +164,6 @@ const Navbar = () => {
                   />
                 </button>
 
-                {/* Dropdown Menu */}
                 <div
                   className={`absolute right-0 mt-3 w-56 rounded-2xl border shadow-xl transition-all duration-300 origin-top-right ${theme.dropdownBg} ${isProfileOpen ? "scale-100 opacity-100 visible" : "scale-95 opacity-0 invisible"}`}
                 >
@@ -198,39 +215,29 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Skeleton or Links */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px] border-t" : "max-h-0"} ${isDark ? "bg-gray-900" : "bg-gray-50"}`}
       >
         <div className="px-6 py-8 space-y-5">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={`flex items-center gap-4 text-lg font-bold ${theme.textMain}`}
-              onClick={() => setIsOpen(false)}
-            >
-              <span className="text-purple-500">{link.icon}</span> {link.name}
-            </NavLink>
-          ))}
-          {!user && (
-            <div className="pt-6 flex flex-col gap-3">
-              <NavLink
-                to="/auth/login"
-                className="py-3.5 text-center border rounded-2xl font-bold dark:text-white"
-                onClick={() => setIsOpen(false)}
-              >
-                Login
-              </NavLink>
-              <NavLink
-                to="/auth/register"
-                className="py-3.5 bg-purple-600 text-white text-center rounded-2xl font-bold shadow-lg"
-                onClick={() => setIsOpen(false)}
-              >
-                Register Now
-              </NavLink>
-            </div>
-          )}
+          {loading
+            ? [1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className={`h-10 w-full rounded-xl animate-pulse ${theme.skeleton}`}
+                ></div>
+              ))
+            : navLinks.map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={`flex items-center gap-4 text-lg font-bold ${theme.textMain}`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="text-purple-500">{link.icon}</span>{" "}
+                  {link.name}
+                </NavLink>
+              ))}
         </div>
       </div>
     </nav>

@@ -36,7 +36,7 @@ const Register = () => {
   const { reg, updateUser, googleUser } = useAuth();
 
   const password = watch("password");
-  const from = location?.state || "/";
+  const from = location.state || "/login";
 
   // --- ১. ইমেইল এবং পাসওয়ার্ড দিয়ে রেজিস্ট্রেশন ---
   const handleRegForm = async (data) => {
@@ -72,7 +72,7 @@ const Register = () => {
       if (dbRes.data) {
         toast.success(`Welcome ${data.fullname}! Account Created.`);
         reset();
-        navigate(from, { replace: true });
+        navigate(location?.state || "/login");
       }
     } catch (err) {
       console.error(err);
@@ -103,7 +103,7 @@ const Register = () => {
       await axios.post(`${Baseurl}/register`, userInfo);
 
       toast.success(`Welcome ${res?.user?.displayName}!`);
-      navigate(from, { replace: true });
+      navigate(location?.state || "/dashboard");
     } catch (err) {
       console.error("Google login error:", err);
       toast.error(err.message || "Google login failed");
@@ -265,6 +265,7 @@ const Register = () => {
               </div>
 
               <button
+                state={location?.state}
                 type="button"
                 onClick={handleGoogleLogin}
                 className={`btn btn-outline btn-sm w-full h-10 rounded-xl border-gray-300 ${isDark ? "text-white hover:bg-gray-800" : "text-gray-700"}`}
@@ -279,7 +280,11 @@ const Register = () => {
 
               <p className={`text-center text-[11px] mt-4 ${themeStyles.sub}`}>
                 Already member?{" "}
-                <Link to="/auth/login" className="text-purple-500 font-bold">
+                <Link
+                  state={location?.state}
+                  to="/auth/login"
+                  className="text-purple-500 font-bold"
+                >
                   Login
                 </Link>
               </p>

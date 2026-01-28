@@ -1,5 +1,5 @@
 import React from "react";
-import CreateContexts from "../Componets/CreateContest/CreateContexts";
+import CreateContexts from "../../Componets/Dashboard/Creator/CreateContest/CreateContexts";
 
 const CreateContest = () => {
   return (
