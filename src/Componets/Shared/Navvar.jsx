@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronDown,
+  FileQuestion,
 } from "lucide-react";
 import useTheme from "../hooks/useTheme";
 import useAuth from "../hooks/useAuth";
@@ -62,6 +63,7 @@ const Navbar = () => {
   const publicLinks = [
     { name: "Home", path: "/", icon: <House size={18} /> },
     { name: "All Contests", path: "/all-contests", icon: <Trophy size={18} /> },
+    { name: "Why Join", path: "/why-join", icon: <FileQuestion size={18} /> },
     {
       name: "Problems",
       path: "/all-problems",

@@ -27,16 +27,13 @@ const Register = () => {
     reset,
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const { reg, updateUser, googleUser } = useAuth();
-
-  const password = watch("password");
-  const from = location.state || "/login";
 
   // --- ১. ইমেইল এবং পাসওয়ার্ড দিয়ে রেজিস্ট্রেশন ---
   const handleRegForm = async (data) => {
@@ -72,7 +69,7 @@ const Register = () => {
       if (dbRes.data) {
         toast.success(`Welcome ${data.fullname}! Account Created.`);
         reset();
-        navigate(location?.state || "/login");
+        navigate(location?.state || "/auth/login");
       }
     } catch (err) {
       console.error(err);

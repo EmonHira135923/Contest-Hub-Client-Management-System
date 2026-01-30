@@ -23,9 +23,6 @@ const Login = () => {
   const location = useLocation();
   const { signin, googleUser } = useAuth();
 
-  // PrivateRouter থেকে আসা state অথবা ডিফল্ট ড্যাশবোর্ড
-  const from = location.state || "/dashboard";
-
   // --- ১. ইমেইল এবং পাসওয়ার্ড দিয়ে লগইন ---
   const onSubmit = async (data) => {
     setIsSubmitting(true);
