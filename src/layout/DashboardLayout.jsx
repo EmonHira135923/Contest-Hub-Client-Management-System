@@ -4,6 +4,7 @@ import Aside from "../Componets/Dashboard/Shared/Aside";
 import Anavbar from "../Componets/Dashboard/Shared/Anavbar";
 import useTheme from "../Componets/hooks/useTheme";
 import useAuth from "../Componets/hooks/useAuth";
+import ScrollToTop from "../Componets/Shared/ScrollToTop";
 
 const DashboardLayout = () => {
   const { isDark } = useTheme();
@@ -30,6 +31,7 @@ const DashboardLayout = () => {
 
   return (
     <div className={`${isDark ? "dark" : ""}`}>
+      <ScrollToTop />
       {/* h-screen ensure kore jate height pura screen nibe */}
       <div className="flex h-screen w-full overflow-hidden bg-white dark:bg-[#020617] transition-colors duration-300">
         <aside
